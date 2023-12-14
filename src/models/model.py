@@ -1,8 +1,11 @@
 from enum import Enum
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from itertools import cycle
-from src.constants import BOARD_SIZE, PLAYER1_NAME, PLAYER2_NAME
+from src.constants import SIZE, PLAYER1_NAME, PLAYER2_NAME
 import sys
+from typing import Any
+import numpy as np
+from src.utils import get_column_wise, get_diagonal_main, get_diagonal_second
 
 # TODO Add logging instead of print statements
 
@@ -15,101 +18,84 @@ class Player:
 
 
 @dataclass
-class Move:
-    """Used to store Move information"""
+class Position:
+    """Used to store details at a position"""
 
     row: int
     col: int
     name: str = ""
 
 
-class Board:
-    """Used to store the board data"""
-
-    def __init__(self, game):
-        self._cells = {}
-        self._game = game
-
-    def play(self, row, col):
-        move = Move(row, col, self._game.current_player.name)
-        if self._game.check_valid_move(move):
-            self._game.process_move(move)
-            for row_state in range(len(self._game._current_moves)):
-                for col_state in range(len(self._game._current_moves[0])):
-                    print(self._game._current_moves[row_state][col_state], end="\t")
-                print()
-            if self._game.is_tied():
-                print("****Game Tied****")
-                sys.exit(0)
-            elif self._game.has_winner():
-                msg = f'****Player "{self._game.current_player.name}" won!****'
-                print(msg)
-                sys.exit(0)
-            else:
-                self._game.toggle_player()
-                msg = f"{self._game.current_player.name}'s turn"
-                print(msg)
-
-    def reset_board(self):
-        self._game.reset_game()
-
-
+@dataclass
 class Game:
     """Used to store the game data"""
 
-    def __init__(self, players, board_size=BOARD_SIZE):
-        self.board_size = board_size
-        self._players = cycle(players)
-        self.current_player = next(self._players)
-        self._current_moves = []
-        self._has_winner = False
-        self._winning_possibilities = []
-        self._setup_board()
+    players: Any
+    size: int = 3
+    _moves: list = field(default_factory=list)
+    _winner_found = False
+    _winning_possibilities: list = field(default_factory=list)
 
-    def _setup_board(self):
-        self._current_moves = [
-            [Move(row, col) for col in range(self.board_size)]
-            for row in range(self.board_size)
+    def __post_init__(self):
+        self._players = cycle(self.players)
+        self.current_player = next(self._players)
+        self._moves = [
+            [Position(row, col) for col in range(self.size)] for row in range(self.size)
         ]
         self._winning_possibilities = self._get_winning_possibilities()
 
     def _get_winning_possibilities(self):
-        rows = [[(move.row, move.col) for move in row] for row in self._current_moves]
-        columns = [list(col) for col in zip(*rows)]
-        first_diagonal = [row[i] for i, row in enumerate(rows)]
-        second_diagonal = [col[j] for j, col in enumerate(reversed(columns))]
-        return rows + columns + [first_diagonal, second_diagonal]
+        rows = [
+            [(position.row, position.col) for position in row] for row in self._moves
+        ]
+        return (
+            rows
+            + get_column_wise(rows)
+            + [get_diagonal_main(rows), get_diagonal_second(rows)]
+        )
 
-    def toggle_player(self):
-        self.current_player = next(self._players)
+    def valid(self, position):
+        row, col = position.row, position.col
+        not_used = self._moves[row][col].name == ""
+        no_winner = not self._winner_found
+        return no_winner and not_used
 
-    def check_valid_move(self, move):
-        row, col = move.row, move.col
-        move_was_not_played = self._current_moves[row][col].name == ""
-        no_winner = not self._has_winner
-        return no_winner and move_was_not_played
-
-    def process_move(self, move):
-        row, col = move.row, move.col
-        self._current_moves[row][col] = move
+    def insert(self, position):
+        row, col = position.row, position.col
+        self._moves[row][col] = position
         for combo in self._winning_possibilities:
-            results = set(self._current_moves[n][m].name for n, m in combo)
-            is_win = (len(results) == 1) and ("" not in results)
-            if is_win:
-                self._has_winner = True
+            results = {self._moves[n][m].name for n, m in combo}
+            if len(results) == 1 and "" not in results:
+                self._winner_found = True
                 break
 
-    def has_winner(self):
-        return self._has_winner
-
     def is_tied(self):
-        no_winner = not self._has_winner
-        played_moves = [move.name for row in self._current_moves for move in row]
+        no_winner = not self._winner_found
+        played_moves = [position.name for row in self._moves for position in row]
         return no_winner and all(played_moves)
 
-    def reset_game(self):
-        for row, row_content in enumerate(self._current_moves):
-            for col, _ in enumerate(row_content):
-                row_content[col] = Move(row, col)
-        self._has_winner = False
-        self.winner_combo = []
+
+@dataclass
+class Board:
+    """Used to store the board data"""
+
+    _game: Game
+
+    def play(self, row, col):
+        position = Position(row, col, self._game.current_player.name)
+        if self._game.valid(position):
+            self._game.insert(position)
+            for row_state in range(len(self._game._moves)):
+                for col_state in range(len(self._game._moves[0])):
+                    print(self._game._moves[row_state][col_state], end="\t")
+                print()
+            print("Next Move")
+            if self._game._winner_found:
+                msg = f'****Player "{self._game.current_player.name}" won!****'
+                print(msg)
+                sys.exit(0)
+            elif self._game.is_tied():
+                print("****Game Tied****")
+                sys.exit(0)
+            else:
+                self._game.current_player = next(self._game._players)
