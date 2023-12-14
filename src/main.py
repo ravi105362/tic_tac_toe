@@ -17,11 +17,11 @@ def main():
 
         try:
             responseX = requests.get(
-                "http://127.0.0.1:5001/random/default/choice?value=0&value=1&value=2",
+                "http://127.0.0.1:5000/random/default/choice?value=0&value=1&value=2",
                 timeout=5,
             )
             responseY = requests.get(
-                "http://127.0.0.1:5001/random/default/choice?value=0&value=1&value=2",
+                "http://127.0.0.1:5000/random/default/choice?value=0&value=1&value=2",
                 timeout=5,
             )
         except Exception as exc:

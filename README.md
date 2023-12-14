@@ -17,7 +17,8 @@ Docker
 1.  Repeat steps 1,2
 2.  Run the command "pytest" to run all the tests
 
-## Future improvements
+## Next Steps
 1. Add more exhaustive tests
 2. Add some e2e tests
 3. Containerize the app and host it as per the requirement
+4. Add logging

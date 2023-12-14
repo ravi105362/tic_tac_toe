@@ -1,6 +1,8 @@
 from src.models.model import Player, Move, Board, Game
 from src.constants import BOARD_SIZE
 
+# TODO Add exhaustive unit tests
+
 
 def test_player():
     player_obj = Player("test player one")

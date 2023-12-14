@@ -4,6 +4,8 @@ from itertools import cycle
 from src.constants import BOARD_SIZE, PLAYER1_NAME, PLAYER2_NAME
 import sys
 
+# TODO Add logging instead of print statements
+
 
 @dataclass
 class Player:
