@@ -54,7 +54,7 @@ class Game:
             + [get_diagonal_main(rows), get_diagonal_second(rows)]
         )
 
-    def valid(self, position):
+    def valid_check(self, position):
         row, col = position.row, position.col
         not_used = self._moves[row][col].name == ""
         no_winner = not self._winner_found
@@ -83,7 +83,7 @@ class Board:
 
     def play(self, row, col):
         position = Position(row, col, self._game.current_player.name)
-        if self._game.valid(position):
+        if self._game.valid_check(position):
             self._game.insert(position)
             for row_state in range(len(self._game._moves)):
                 for col_state in range(len(self._game._moves[0])):
