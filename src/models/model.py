@@ -7,17 +7,23 @@ import sys
 
 @dataclass
 class Player:
+    """Used to store Player information"""
+
     name: str
 
 
 @dataclass
 class Move:
+    """Used to store Move information"""
+
     row: int
     col: int
     name: str = ""
 
 
 class Board:
+    """Used to store the board data"""
+
     def __init__(self, game):
         self._cells = {}
         self._game = game
@@ -47,6 +53,8 @@ class Board:
 
 
 class Game:
+    """Used to store the game data"""
+
     def __init__(self, players, board_size=BOARD_SIZE):
         self.board_size = board_size
         self._players = cycle(players)

@@ -15,7 +15,7 @@ Docker
 
 ## To run tests
 1.  Repeat steps 1,2
-2.  Run the commandd pytest to run all the tests
+2.  Run the command "pytest" to run all the tests
 
 ## Future improvements
 1. Add more exhaustive tests
