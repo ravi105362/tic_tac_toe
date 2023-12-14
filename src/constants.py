@@ -1,0 +1,3 @@
+BOARD_SIZE = 3
+PLAYER1_NAME = "Dani"
+PLAYER2_NAME = "Matt"
