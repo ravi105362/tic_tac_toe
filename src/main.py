@@ -26,7 +26,7 @@ def main():
                 timeout=5,
             )
         except Exception as exc:
-            print(f"Exception: generating radom values {exc}")
+            print(f"Exception: generating random values {exc}")
 
         responseX = int(json.loads(responseX.text)["value"])
         responseY = int(json.loads(responseY.text)["value"])

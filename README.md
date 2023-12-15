@@ -1,9 +1,10 @@
 # Tic Tac Toe
 This game does not requires manual intervention. It uses random generator to decide the position.
-
+[random API](https://github.com/brendanmaguire/random)
 ## Requirements
 
 Python 3.9.10+
+
 Docker
 
 ## Steps to run the application

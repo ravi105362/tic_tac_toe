@@ -7,8 +7,6 @@ from typing import Any
 import numpy as np
 from src.utils import get_column_wise, get_diagonal_main, get_diagonal_second
 
-# TODO Add logging instead of print statements
-
 
 @dataclass
 class Player:
