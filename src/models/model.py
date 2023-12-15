@@ -4,7 +4,6 @@ from itertools import cycle
 from src.constants import SIZE, PLAYER1_NAME, PLAYER2_NAME
 import sys
 from typing import Any
-import numpy as np
 from src.utils import get_column_wise, get_diagonal_main, get_diagonal_second
 
 
